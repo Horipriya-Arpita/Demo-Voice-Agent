@@ -1,0 +1,20 @@
+# Core Framework
+# Note: Use WSL on Windows due to daily-python compatibility issues
+# See: https://github.com/pipecat-ai/pipecat/issues/759
+pipecat-ai[daily,deepgram,openai,silero]>=0.0.50
+
+# Environment Management
+python-dotenv>=1.0.0
+
+# Async HTTP
+aiohttp>=3.9.0
+
+# Optional: Alternative LLM providers (uncomment if needed)
+# groq>=0.4.0  # For Groq LLM
+
+# Optional: Alternative TTS providers (uncomment if needed)
+# elevenlabs>=0.2.0  # For ElevenLabs TTS
+
+# Development Tools (optional)
+# pytest>=7.4.0
+# pytest-asyncio>=0.21.0
