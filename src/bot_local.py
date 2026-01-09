@@ -10,10 +10,11 @@ from pipecat.processors.aggregators.llm_response import (
     LLMAssistantContextAggregator,
     LLMUserContextAggregator,
 )
+from pipecat.processors.aggregators.openai_llm_context import OpenAILLMContext
 from pipecat.services.deepgram.stt import DeepgramSTTService
 from pipecat.services.deepgram.tts import DeepgramTTSService
 from pipecat.services.openai.llm import OpenAILLMService
-from pipecat.transports.local.audio import LocalAudioTransport
+from pipecat.transports.local.audio import LocalAudioTransport, LocalAudioTransportParams
 
 from src.config import Config
 from src.utils.logger import setup_logger
@@ -44,7 +45,11 @@ class LocalVoiceAgent:
             self.logger.info("Initializing local voice agent...")
 
             # Initialize local audio transport (uses your microphone and speakers)
-            transport = LocalAudioTransport()
+            params = LocalAudioTransportParams(
+                audio_in_enabled=True,
+                audio_out_enabled=True,
+            )
+            transport = LocalAudioTransport(params)
             self.transport = transport
 
             # Initialize Speech-to-Text (Deepgram)
@@ -56,9 +61,10 @@ class LocalVoiceAgent:
             # Initialize Text-to-Speech
             tts = self._initialize_tts()
 
-            # Create message aggregators
-            user_response = LLMUserContextAggregator()
-            assistant_response = LLMAssistantContextAggregator()
+            # Create LLM context and message aggregators
+            context = OpenAILLMContext()
+            user_response = LLMUserContextAggregator(context)
+            assistant_response = LLMAssistantContextAggregator(context)
 
             # Build the pipeline
             # Audio Input -> STT -> User Aggregator -> LLM -> Assistant Aggregator -> TTS -> Audio Output
@@ -83,6 +89,7 @@ class LocalVoiceAgent:
             # Log connection info
             self.logger.info(f"Local voice agent ready!")
             self.logger.info(f"Speak into your microphone to start talking to the agent")
+            self.logger.info(f"Press Ctrl+C to stop")
 
             # Run the pipeline
             await self.runner.run(task)

@@ -10,18 +10,18 @@ from dotenv import load_dotenv
 class Config:
     """Configuration class for the voice agent."""
 
-    # Daily.co Configuration
-    daily_api_key: str
-    daily_room_url: str
-
-    # Deepgram Configuration
+    # Deepgram Configuration (required)
     deepgram_api_key: str
+
+    # Daily.co Configuration (optional - only needed for WebRTC mode)
+    daily_api_key: Optional[str] = None
+    daily_room_url: Optional[str] = None
 
     # LLM Configuration
     openai_api_key: Optional[str] = None
     openai_model: str = "gpt-4o-mini"
     groq_api_key: Optional[str] = None
-    groq_model: str = "llama-3.1-70b-versatile"
+    groq_model: str = "llama-3.3-70b-versatile"
 
     # TTS Configuration
     tts_provider: str = "deepgram"  # Options: deepgram, elevenlabs
@@ -50,30 +50,24 @@ class Config:
         load_dotenv()
 
         # Required fields
-        daily_api_key = os.getenv("DAILY_API_KEY")
-        daily_room_url = os.getenv("DAILY_ROOM_URL")
         deepgram_api_key = os.getenv("DEEPGRAM_API_KEY")
 
         # Validate required fields
-        missing_fields = []
-        if not daily_api_key:
-            missing_fields.append("DAILY_API_KEY")
-        if not daily_room_url:
-            missing_fields.append("DAILY_ROOM_URL")
         if not deepgram_api_key:
-            missing_fields.append("DEEPGRAM_API_KEY")
-
-        if missing_fields:
             raise ValueError(
-                f"Missing required environment variables: {', '.join(missing_fields)}\n"
-                f"Please set them in your .env file or environment."
+                "Missing required environment variable: DEEPGRAM_API_KEY\n"
+                "Please set it in your .env file or environment."
             )
+
+        # Optional Daily.co fields (only needed for WebRTC mode)
+        daily_api_key = os.getenv("DAILY_API_KEY")
+        daily_room_url = os.getenv("DAILY_ROOM_URL")
 
         # Optional LLM configuration
         openai_api_key = os.getenv("OPENAI_API_KEY")
         openai_model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
         groq_api_key = os.getenv("GROQ_API_KEY")
-        groq_model = os.getenv("GROQ_MODEL", "llama-3.1-70b-versatile")
+        groq_model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
         # Validate that at least one LLM is configured
         if not openai_api_key and not groq_api_key:

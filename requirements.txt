@@ -1,7 +1,7 @@
 # Core Framework
-# Note: Use WSL on Windows due to daily-python compatibility issues
-# See: https://github.com/pipecat-ai/pipecat/issues/759
-pipecat-ai[daily,deepgram,openai,silero]>=0.0.50
+# Note: 'daily' extra removed for local audio mode (no WebRTC needed)
+# Use 'local' extra for local audio support
+pipecat-ai[local,deepgram,openai,silero]>=0.0.50
 
 # Environment Management
 python-dotenv>=1.0.0
